@@ -1,0 +1,114 @@
+<!DOCTYPE html><html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agendamento BXT</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Fredoka One', sans-serif;
+  background-color: #4d4d4d;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 2em;
+  color: #a4ff00;
+  text-shadow: 2px 2px #000;
+  margin-bottom: 10px;
+}
+
+form {
+  background: #222;
+  border-radius: 15px;
+  padding: 20px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 0 10px #000;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  margin-top: 15px;
+  font-size: 1.1em;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  font-size: 1em;
+}
+
+button {
+  margin-top: 20px;
+  padding: 15px;
+  width: 100%;
+  background: #00ccff;
+  color: #fff;
+  font-size: 1.2em;
+  font-family: 'Fredoka One', sans-serif;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  box-shadow: 2px 2px #000;
+}
+
+button:hover {
+  background: #00aacc;
+}
+
+.footer {
+  margin-top: 20px;
+  font-size: 0.9em;
+  color: #ccc;
+}
+
+  </style>
+</head>
+<body>
+  <h1>Agende seu Corte BXT</h1>
+  <form id="form-agendamento">
+    <label for="nome">Seu nome:</label>
+    <input type="text" id="nome" name="nome" required><label for="barbeiro">Escolha o barbeiro:</label>
+<select id="barbeiro" name="barbeiro" required>
+  <option value="">Selecione</option>
+  <option value="Faky">Faky</option>
+  <option value="GL">GL</option>
+</select>
+
+<label for="data">Data:</label>
+<input type="date" id="data" name="data" required>
+
+<label for="hora">Hora:</label>
+<input type="time" id="hora" name="hora" required>
+
+<button type="submit">Agendar via WhatsApp</button>
+
+  </form>  <div class="footer">
+    Cortes estilosos no estilo BXT 😎💈
+  </div>  <script>
+    const form = document.getElementById('form-agendamento');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const nome = document.getElementById('nome').value;
+      const barbeiro = document.getElementById('barbeiro').value;
+      const data = document.getElementById('data').value;
+      const hora = document.getElementById('hora').value;
+
+      const msg = `Olá, gostaria de agendar um horário na BXT:\n\nNome: ${nome}\nBarbeiro: ${barbeiro}\nData: ${data}\nHora: ${hora}`;
+      const telefone = '5521966271234'; // número da barbearia
+      const url = `https://wa.me/${telefone}?text=${encodeURIComponent(msg)}`;
+
+      window.open(url, '_blank');
+    });
+  </script></body>
+</html>
