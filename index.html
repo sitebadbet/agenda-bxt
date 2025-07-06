@@ -105,9 +105,15 @@ button:hover {
       const hora = document.getElementById('hora').value;
 
       const msg = `Olá, gostaria de agendar um horário na BXT:\n\nNome: ${nome}\nBarbeiro: ${barbeiro}\nData: ${data}\nHora: ${hora}`;
-      const telefone = '5521966271234'; // número da barbearia
-      const url = `https://wa.me/${telefone}?text=${encodeURIComponent(msg)}`;
 
+      let telefone = '';
+      if (barbeiro === 'Faky') {
+        telefone = '5521978798909';
+      } else {
+        telefone = '5521966271234'; // número padrão ou GL
+      }
+
+      const url = `https://wa.me/${telefone}?text=${encodeURIComponent(msg)}`;
       window.open(url, '_blank');
     });
   </script></body>
