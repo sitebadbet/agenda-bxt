@@ -4,117 +4,190 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agendamento BXT</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');body {
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');* {
+  box-sizing: border-box;
+}
+
+body {
   margin: 0;
-  padding: 0;
+  padding: 20px 10px;
   font-family: 'Fredoka One', sans-serif;
-  background-color: #4d4d4d;
+  background-color: #1c1c1c;
   color: #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  justify-content: flex-start;
+  height: 100vh;
 }
 
-h1 {
-  font-size: 2em;
-  color: #a4ff00;
-  text-shadow: 2px 2px #000;
+.header-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-bottom: 10px;
 }
 
-form {
-  background: #222;
+.header-logo img {
+  width: 120px;
+  max-width: 80%;
+  border-radius: 12px;
+}
+
+.header-logo h1 {
+  margin: 10px 0 0;
+  font-size: 1.2em;
+  color: #a4ff00;
+}
+
+.chat-box {
+  background-color: #111;
   border-radius: 15px;
-  padding: 20px;
+  padding: 15px;
   width: 100%;
   max-width: 400px;
   box-shadow: 0 0 10px #000;
-}
-
-label {
-  display: block;
-  margin-bottom: 5px;
-  margin-top: 15px;
+  min-height: 100px;
+  white-space: pre-line;
   font-size: 1.1em;
+  border-left: 5px solid #00ccff;
+  margin-bottom: 20px;
 }
 
-input, select {
-  width: 100%;
+input, select, button {
+  font-family: 'Fredoka One', sans-serif;
+  font-size: 1em;
   padding: 10px;
+  width: 100%;
   border-radius: 10px;
   border: none;
-  font-size: 1em;
+  margin-top: 15px;
 }
 
 button {
-  margin-top: 20px;
-  padding: 15px;
-  width: 100%;
-  background: #00ccff;
+  background-color: #00ccff;
   color: #fff;
-  font-size: 1.2em;
-  font-family: 'Fredoka One', sans-serif;
-  border: none;
-  border-radius: 15px;
   cursor: pointer;
-  box-shadow: 2px 2px #000;
 }
 
 button:hover {
-  background: #00aacc;
+  background-color: #009ec2;
 }
 
-.footer {
-  margin-top: 20px;
-  font-size: 0.9em;
-  color: #ccc;
+.step {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+}
+
+.step.active {
+  display: flex;
+}
+
+#erroBarbeiro {
+  color: red;
+  font-size: 0.8em;
+  margin-top: 5px;
+  display: none;
 }
 
   </style>
 </head>
 <body>
-  <h1>Agende seu Corte BXT</h1>
-  <form id="form-agendamento">
-    <label for="nome">Seu nome:</label>
-    <input type="text" id="nome" name="nome" required><label for="barbeiro">Escolha o barbeiro:</label>
-<select id="barbeiro" name="barbeiro" required>
-  <option value="">Selecione</option>
-  <option value="Faky">Faky</option>
-  <option value="GL">GL</option>
-</select>
-
-<label for="data">Data:</label>
-<input type="date" id="data" name="data" required>
-
-<label for="hora">Hora:</label>
-<input type="time" id="hora" name="hora" required>
-
-<button type="submit">Agendar via WhatsApp</button>
-
-  </form>  <div class="footer">
-    Cortes estilosos no estilo BXT 😎💈
+  <div class="header-logo">
+    <img src="logo-bxt.png" alt="Logo Cortes BXT">
+    <h1>Cortes BXT</h1>
+  </div>  <div class="chat-box" id="chatBox"></div>  <div id="step1" class="step active">
+    <input type="text" id="nome" placeholder="Digite seu nome...">
+    <button onclick="proximoPasso(1)">Avançar</button>
+  </div>  <div id="step2" class="step">
+    <input type="text" id="barbeiro" placeholder="Faky ou GL?">
+    <div id="erroBarbeiro">⚠️ Barbeiros disponíveis: Faky ou GL</div>
+    <button onclick="proximoPasso(2)">Avançar</button>
+  </div>  <div id="step3" class="step">
+    <input type="date" id="data">
+    <button onclick="proximoPasso(3)">Avançar</button>
+  </div>  <div id="step4" class="step">
+    <input type="time" id="hora">
+    <button onclick="finalizar()">Confirmar</button>
   </div>  <script>
-    const form = document.getElementById('form-agendamento');
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
+    const chatBox = document.getElementById('chatBox');
+    const steps = [
+      document.getElementById('step1'),
+      document.getElementById('step2'),
+      document.getElementById('step3'),
+      document.getElementById('step4')
+    ];
 
-      const nome = document.getElementById('nome').value;
-      const barbeiro = document.getElementById('barbeiro').value;
-      const data = document.getElementById('data').value;
-      const hora = document.getElementById('hora').value;
+    let nome = '';
+    let barbeiro = '';
+    let data = '';
+    let hora = '';
 
-      const msg = `Olá, gostaria de agendar um horário na BXT:\n\nNome: ${nome}\nBarbeiro: ${barbeiro}\nData: ${data}\nHora: ${hora}`;
+    function escreverTexto(texto, callback) {
+      chatBox.textContent = '';
+      let i = 0;
+      const intervalo = setInterval(() => {
+        chatBox.textContent += texto.charAt(i);
+        i++;
+        if (i >= texto.length) {
+          clearInterval(intervalo);
+          if (callback) setTimeout(callback, 600);
+        }
+      }, 40);
+    }
 
-      let telefone = '';
-      if (barbeiro === 'Faky') {
-        telefone = '5521978798909';
-      } else {
-        telefone = '5521966271234'; // número padrão ou GL
+    function proximoPasso(passo) {
+      if (passo === 1) {
+        nome = document.getElementById('nome').value.trim();
+        if (!nome) return;
+        escreverTexto(`Então mano ${nome}, qual sua preferência de barbeiro?`, () => {
+          steps[0].classList.remove('active');
+          steps[1].classList.add('active');
+        });
       }
 
+      if (passo === 2) {
+        barbeiro = document.getElementById('barbeiro').value.trim().toUpperCase();
+        const erro = document.getElementById('erroBarbeiro');
+        if (barbeiro !== 'FAKY' && barbeiro !== 'GL') {
+          erro.style.display = 'block';
+          return;
+        } else {
+          erro.style.display = 'none';
+          escreverTexto(`Brabo! Escolhe agora qual dia você vai colar 👇🏽`, () => {
+            steps[1].classList.remove('active');
+            steps[2].classList.add('active');
+          });
+        }
+      }
+
+      if (passo === 3) {
+        data = document.getElementById('data').value;
+        if (!data) return;
+        escreverTexto(`Fechou! Vai brotar que horas? ⏰`, () => {
+          steps[2].classList.remove('active');
+          steps[3].classList.add('active');
+        });
+      }
+    }
+
+    function finalizar() {
+      hora = document.getElementById('hora').value;
+      if (!hora) return;
+
+      const msg =
+        `Salve! Aqui é ${nome} 😎\n` +
+        `Quero agendar com ${barbeiro} 💈\n` +
+        `Dia: ${data}, Hora: ${hora} 🕒\n` +
+        `Tamo junto!`; 
+
+      let telefone = barbeiro === 'FAKY' ? '5521978798909' : '5521966271234';
       const url = `https://wa.me/${telefone}?text=${encodeURIComponent(msg)}`;
       window.open(url, '_blank');
-    });
+      escreverTexto('Aí sim! Mandando pro WhatsApp agora... 💬');
+    }
+
+    escreverTexto("Olá, seja bem-vindo aos cortes BXT.\nQual seu nome?");
   </script></body>
-</html>
+            </html>
