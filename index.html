@@ -26,12 +26,17 @@ body {
   flex-direction: column;
   align-items: center;
   margin-bottom: 10px;
+  animation: fadeInLogo 1s ease-out;
+}
+
+@keyframes fadeInLogo {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .header-logo img {
   width: 80%;
   max-width: 300px;
-  border-radius: 12px;
 }
 
 .header-logo h1 {
